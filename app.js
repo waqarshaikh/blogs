@@ -26,6 +26,8 @@ app.post('/posts', postController.createPost)
 
 app.get('/posts/:postId/comments', commentController.getComments)
 app.post('/posts/:postId/comments', commentController.createComment)
+app.put('/posts/:id', postController.updatePost);
+app.delete('/posts/:id', postController.deletePost);
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000')

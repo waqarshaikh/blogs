@@ -9,7 +9,12 @@ document.addEventListener('DOMContentLoaded', () => {
             posts.forEach(post => {
                 const postElement = document.createElement('div');
                 postElement.className = 'post-card';
-                postElement.innerHTML = `<h3>${post.title}</h3><p>${post.content}</p>`;
+                postElement.innerHTML = `
+                    <h3>${post.title}</h3>
+                    <p>${post.content}</p>
+                    <button onclick="editPost('${post._id}')">Edit</button>
+                    <button onclick="deletePost('${post._id}')">Delete</button>
+                `;
                 postsDiv.appendChild(postElement);
             });
         })
@@ -35,10 +40,47 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(post => {
                 const postElement = document.createElement('div');
                 postElement.className = 'post-card';
-                postElement.innerHTML = `<h3>${post.title}</h3><p>${post.content}</p>`;
+                postElement.innerHTML = `
+                    <h3>${post.title}</h3>
+                    <p>${post.content}</p>
+                    <button onclick="editPost('${post._id}')">Edit</button>
+                    <button onclick="deletePost('${post._id}')">Delete</button>
+                `;
                 postsDiv.appendChild(postElement);
                 postForm.reset();
             })
             .catch(error => console.error('Error creating post:', error));
     });
 });
+
+function editPost(id) {
+    const title = prompt('Enter new title:');
+    const content = prompt('Enter new content:');
+    if (title && content) {
+        fetch(`/posts/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ title, content })
+        })
+            .then(response => response.json())
+            .then(post => {
+                location.reload();
+            })
+            .catch(error => console.error('Error updating post:', error));
+    }
+}
+
+function deletePost(id) {
+    if (confirm('Are you sure you want to delete this post?')) {
+        fetch(`/posts/${id}`, {
+            method: 'DELETE'
+        })
+            .then(response => response.json())
+            .then(result => {
+                location.reload();
+            })
+            .catch(error => console.error('Error deleting post:', error));
+    }
+}
